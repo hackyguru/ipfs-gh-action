@@ -1,12 +1,8 @@
-import lighthouse from '@lighthouse-web3/sdk'
+const lighthouse = require('@lighthouse-web3/sdk');
 
 async function main() {
-
   const apiKey = process.env.LIGHTHOUSE_API_KEY;
-  const uploadResponse = await lighthouse.upload(
-  './', 
-  apiKey
-);
+  const uploadResponse = await lighthouse.upload('./', apiKey);
 
   const cid = uploadResponse.data.Hash;
   console.log(`Uploaded to IPFS : ${cid}`);
