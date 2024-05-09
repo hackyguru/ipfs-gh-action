@@ -26,7 +26,7 @@ jobs:
       env:
         LIGHTHOUSE_API_KEY: ${{ secrets.LIGHTHOUSE_API_KEY }}
       run: |
-        npm install @lighthouse-web3/sdk archiver
+        npm install @lighthouse-web3/sdk
         node backup.js
 
     - name: Store CID
