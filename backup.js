@@ -24,16 +24,10 @@ async function main() {
   // Get all files in the current directory
   const files = getAllFiles('.');
 
-  // Create an array of file objects for lighthouse.upload
-  const fileObjects = files.map(file => ({
-    path: file,
-    content: fs.readFileSync(file)
-  }));
-
   // Upload files to Lighthouse
-  const uploadResponse = await lighthouse.upload(fileObjects, apiKey);
+  const uploadResponse = await lighthouse.upload('.', apiKey, false);
 
-  const cid = uploadResponse.data.Hash;
+  const cid = uploadResponse.Hash;
   console.log(`Uploaded to IPFS: ${cid}`);
   console.log(`::set-output name=cid::${cid}`);
 }
