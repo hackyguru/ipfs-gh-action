@@ -1,31 +1,37 @@
 const lighthouse = require('@lighthouse-web3/sdk');
-const { FormData } = require('formdata-node');
-const { fileFromPath } = require('formdata-node/file-from-path');
 const fs = require('fs');
 const path = require('path');
 
 async function main() {
   const apiKey = process.env.LIGHTHOUSE_API_KEY;
   
-  const formData = new FormData();
-  
-  // Recursively add all files in the current directory
-  const addFilesToForm = (dir) => {
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-      const filePath = path.join(dir, file);
-      const stat = fs.statSync(filePath);
-      if (stat.isDirectory()) {
-        addFilesToForm(filePath);
+  // Function to recursively get all files in a directory
+  function getAllFiles(dir) {
+    let results = [];
+    const list = fs.readdirSync(dir);
+    list.forEach((file) => {
+      file = path.join(dir, file);
+      const stat = fs.statSync(file);
+      if (stat && stat.isDirectory()) {
+        results = results.concat(getAllFiles(file));
       } else {
-        formData.append('file', fileFromPath(filePath), file);
+        results.push(file);
       }
-    }
-  };
-  
-  addFilesToForm('.');
+    });
+    return results;
+  }
 
-  const uploadResponse = await lighthouse.upload(formData, apiKey);
+  // Get all files in the current directory
+  const files = getAllFiles('.');
+
+  // Create an array of file objects for lighthouse.upload
+  const fileObjects = files.map(file => ({
+    path: file,
+    content: fs.readFileSync(file)
+  }));
+
+  // Upload files to Lighthouse
+  const uploadResponse = await lighthouse.upload(fileObjects, apiKey);
 
   const cid = uploadResponse.data.Hash;
   console.log(`Uploaded to IPFS: ${cid}`);
