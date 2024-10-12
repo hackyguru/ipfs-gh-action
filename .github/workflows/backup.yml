@@ -23,8 +23,7 @@ jobs:
         node-version: 16.x
 
     - name: Install dependencies
-      run: |
-        npm install @lighthouse-web3/sdk formdata-node
+      run: npm install @lighthouse-web3/sdk
 
     - name: Upload to Lighthouse.storage
       env:
